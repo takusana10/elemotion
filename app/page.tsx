@@ -29,14 +29,21 @@ interface ElementProps {
 
 const Element = React.memo(({ symbol, name, number, accent = false, gifUrl, videoUrl, thumbnail, onClick }: ElementProps) => {
   const [isHovered, setIsHovered] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(true); // Default to true for PC
   const elementRef = useRef<HTMLDivElement>(null);
   const isComingSoon = name === 'Coming Soon';
 
-  // Intersection Observer for performance optimization
+  // Intersection Observer for performance optimization (mobile only)
   useEffect(() => {
     const element = elementRef.current;
     if (!element) return;
+
+    // Only use Intersection Observer on mobile devices
+    const isMobile = window.innerWidth <= 768;
+    if (!isMobile) {
+      setIsVisible(true);
+      return;
+    }
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -45,7 +52,7 @@ const Element = React.memo(({ symbol, name, number, accent = false, gifUrl, vide
         });
       },
       {
-        rootMargin: '50px',
+        rootMargin: '100px',
         threshold: 0.01
       }
     );
@@ -81,9 +88,7 @@ const Element = React.memo(({ symbol, name, number, accent = false, gifUrl, vide
       `}
       style={{
         contain: 'layout style paint',
-        willChange: isHovered ? 'transform, box-shadow, z-index' : 'auto',
-        backfaceVisibility: 'hidden',
-        transform: 'translateZ(0)'
+        willChange: isHovered ? 'transform, box-shadow, z-index' : 'auto'
       }}
     >
       {/* GIF/Thumbnail - Full cell */}
@@ -95,10 +100,6 @@ const Element = React.memo(({ symbol, name, number, accent = false, gifUrl, vide
               alt=""
               loading="lazy"
               className="w-full h-full object-cover transition-all duration-500"
-              style={{
-                backfaceVisibility: 'hidden',
-                transform: 'translateZ(0)'
-              }}
             />
           ) : (
             <img
@@ -106,10 +107,6 @@ const Element = React.memo(({ symbol, name, number, accent = false, gifUrl, vide
               alt=""
               loading="lazy"
               className="w-full h-full object-cover grayscale contrast-125 brightness-110 transition-all duration-500"
-              style={{
-                backfaceVisibility: 'hidden',
-                transform: 'translateZ(0)'
-              }}
             />
           )}
         </div>

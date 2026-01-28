@@ -27,9 +27,19 @@ body {
     -webkit-tap-highlight-color: transparent;
   }
 
+  html {
+    /* Prevent layout shift on zoom */
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
   body {
     overflow-x: hidden;
     width: 100vw;
+    /* Prevent zoom-induced layout shifts */
+    position: relative;
+    min-height: 100vh;
   }
 
   /* Reduce animation complexity on mobile */
@@ -62,6 +72,14 @@ body {
   /* Optimize grid performance */
   [style*="gridTemplateColumns"] {
     contain: layout style paint;
+  }
+
+  /* GPU acceleration for mobile elements only */
+  img {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
   }
 }
 
