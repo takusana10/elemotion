@@ -29,9 +29,21 @@ interface ElementProps {
 
 const Element = React.memo(({ symbol, name, number, accent = false, gifUrl, videoUrl, thumbnail, onClick }: ElementProps) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [isActive, setIsActive] = useState(false); // For mobile click state
   const [isVisible, setIsVisible] = useState(true); // Default to true for PC
+  const [isMobile, setIsMobile] = useState(false);
   const elementRef = useRef<HTMLDivElement>(null);
   const isComingSoon = name === 'Coming Soon';
+
+  // Detect mobile device
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Intersection Observer for performance optimization (mobile only)
   useEffect(() => {
@@ -39,7 +51,6 @@ const Element = React.memo(({ symbol, name, number, accent = false, gifUrl, vide
     if (!element) return;
 
     // Only use Intersection Observer on mobile devices
-    const isMobile = window.innerWidth <= 768;
     if (!isMobile) {
       setIsVisible(true);
       return;
@@ -62,20 +73,40 @@ const Element = React.memo(({ symbol, name, number, accent = false, gifUrl, vide
     return () => {
       observer.disconnect();
     };
-  }, []);
+  }, [isMobile]);
 
   const handleMouseEnter = useCallback(() => {
-    setIsHovered(true);
-  }, []);
+    if (!isMobile) {
+      setIsHovered(true);
+    }
+  }, [isMobile]);
 
   const handleMouseLeave = useCallback(() => {
-    setIsHovered(false);
-  }, []);
+    if (!isMobile) {
+      setIsHovered(false);
+    }
+  }, [isMobile]);
+
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    if (isMobile) {
+      // On mobile, toggle active state on click
+      e.stopPropagation();
+      setIsActive(!isActive);
+      // Call original onClick after a delay to show GIF
+      setTimeout(() => {
+        onClick?.();
+      }, 300);
+    } else {
+      onClick?.();
+    }
+  }, [isMobile, isActive, onClick]);
+
+  const shouldShowGif = isMobile ? isActive : isHovered;
 
   return (
     <div
       ref={elementRef}
-      onClick={onClick}
+      onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       className={`
@@ -84,17 +115,17 @@ const Element = React.memo(({ symbol, name, number, accent = false, gifUrl, vide
         transition-all duration-500 ease-out
         cursor-pointer group
         ${accent ? 'bg-[#FFD700]' : 'bg-white'}
-        ${isHovered ? 'shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] md:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] scale-[0.98] z-[100]' : 'shadow-none z-0'}
+        ${isHovered || isActive ? 'shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] md:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] scale-[0.98] z-[100]' : 'shadow-none z-0'}
       `}
       style={{
         contain: 'layout style paint',
-        willChange: isHovered ? 'transform, box-shadow, z-index' : 'auto'
+        willChange: isHovered || isActive ? 'transform, box-shadow, z-index' : 'auto'
       }}
     >
       {/* GIF/Thumbnail - Full cell */}
       {(gifUrl || thumbnail) && isVisible && (
         <div className="absolute inset-0 z-0 overflow-hidden">
-          {isHovered && gifUrl ? (
+          {shouldShowGif && gifUrl ? (
             <img
               src={gifUrl}
               alt=""
@@ -329,7 +360,7 @@ export default function Home() {
               </h2>
             </div>
           </div>
-          <div className="relative w-full">
+          <div className="relative overflow-x-auto md:overflow-x-visible">
             {/* Grid corner marks */}
             <div className="absolute -top-2 -left-2 w-4 h-4 border-l border-t border-black opacity-40 z-10" />
             <div className="absolute -top-2 -right-2 w-4 h-4 border-r border-t border-black opacity-40 z-10" />
@@ -337,10 +368,10 @@ export default function Home() {
             <div className="absolute -bottom-2 -right-2 w-4 h-4 border-r border-b border-black opacity-40 z-10" />
 
             <div
-              className="grid gap-1 md:gap-2 lg:gap-3"
+              className="grid gap-2 md:gap-3"
               style={{
-                gridTemplateColumns: 'repeat(15, minmax(0, 1fr))',
-                width: '100%',
+                gridTemplateColumns: 'repeat(15, minmax(60px, 1fr))',
+                minWidth: '900px',
                 contain: 'layout style'
               }}
             >
