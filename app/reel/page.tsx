@@ -220,7 +220,6 @@ export default function ReelPage() {
           <div className="flex gap-6 mb-6">
             <DataLabel label="SECTION" value="02" />
             <DataLabel label="TYPE" value="VIDEO" />
-            <DataLabel label="WORKS" value="06" />
           </div>
 
           <div className="flex items-center gap-3 md:gap-4 mb-3 relative">

@@ -10,12 +10,11 @@ interface SectionLinkProps {
   number: string;
   title: string;
   description: string;
-  count: number;
   icon?: React.ReactNode;
   accent?: boolean;
 }
 
-export default function SectionLink({ href, number, title, description, count, icon, accent = false }: SectionLinkProps) {
+export default function SectionLink({ href, number, title, description, icon, accent = false }: SectionLinkProps) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -46,7 +45,6 @@ export default function SectionLink({ href, number, title, description, count, i
         {/* Metadata */}
         <div className="flex gap-4 mb-2">
           <DataLabel label="SECTION" value={number} />
-          <DataLabel label="ITEMS" value={count.toString().padStart(2, '0')} />
         </div>
 
         {/* Header */}
@@ -89,11 +87,8 @@ export default function SectionLink({ href, number, title, description, count, i
           {description}
         </p>
 
-        {/* Count & Arrow */}
-        <div className="flex items-center justify-between">
-          <span className="font-mono text-xs md:text-sm font-semibold uppercase tracking-wider">
-            {count} {count === 1 ? 'Work' : 'Works'}
-          </span>
+        {/* Arrow */}
+        <div className="flex items-center justify-end">
           <div className={`transition-all duration-300 ${isHovered ? 'translate-x-2 -translate-y-2' : ''}`}>
             <ArrowUpRight size={24} strokeWidth={2.5} />
           </div>

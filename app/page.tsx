@@ -261,7 +261,6 @@ export default function Home() {
           {/* Decorative Labels */}
           <div className="absolute -top-8 left-0 flex gap-6">
             <DataLabel label="SECTION" value="01" />
-            <DataLabel label="WORKS" value={String(everydaysFiles.length)} />
             <DataLabel label="GRID" value="7×15" />
           </div>
 
@@ -359,7 +358,6 @@ export default function Home() {
             number="02"
             title="REEL"
             description="Featured client works"
-            count={6}
             icon={<Play size={24} fill="#FFD700" />}
             accent={true}
           />
@@ -369,7 +367,6 @@ export default function Home() {
             number="03"
             title="TOY"
             description="Experimental projects and creative explorations"
-            count={8}
             icon={<Lightbulb size={24} />}
           />
 
@@ -378,7 +375,6 @@ export default function Home() {
             number="04"
             title="IMAGE"
             description="Static visual work — posters, illustrations, and design"
-            count={12}
             icon={<ImageIcon size={24} />}
           />
         </section>

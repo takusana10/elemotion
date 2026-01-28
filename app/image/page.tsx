@@ -155,7 +155,6 @@ export default function ImagePage() {
           <div className="flex gap-6 mb-6">
             <DataLabel label="SECTION" value="04" />
             <DataLabel label="TYPE" value="STATIC" />
-            <DataLabel label="WORKS" value={String(imageFiles.length)} />
           </div>
 
           <div className="flex items-center gap-3 md:gap-4 mb-3 relative">

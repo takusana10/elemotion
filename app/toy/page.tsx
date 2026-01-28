@@ -169,7 +169,6 @@ export default function ToyPage() {
           <div className="flex gap-6 mb-6">
             <DataLabel label="SECTION" value="03" />
             <DataLabel label="TYPE" value="EXPERIMENTAL" />
-            <DataLabel label="WORKS" value={String(toyFiles.length)} />
           </div>
 
           <div className="flex items-center gap-3 md:gap-4 mb-3 relative">
