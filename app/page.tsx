@@ -246,7 +246,7 @@ export default function Home() {
               Tokyo, Japan
             </p>
           </div>
-          <p className="font-grotesk text-sm md:text-base font-semibold relative max-w-2xl">
+          <p className="font-grotesk text-sm md:text-base font-semibold relative max-w-2xl bg-white px-2 py-1 -ml-2 inline-block z-60">
             Motion Graphics Designer based in Tokyo.
           </p>
         </header>
