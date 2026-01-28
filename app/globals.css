@@ -72,6 +72,7 @@ body {
   /* Optimize grid performance */
   [style*="gridTemplateColumns"] {
     contain: layout style paint;
+    will-change: auto;
   }
 
   /* GPU acceleration for mobile elements only */
@@ -80,6 +81,55 @@ body {
     transform: translateZ(0);
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
+  }
+
+  /* Modal stability - prevent layout shift on image load (MOBILE ONLY) */
+  .work-modal-container {
+    /* Ensure container maintains aspect ratio */
+    aspect-ratio: 1 / 1;
+  }
+
+  .work-modal-image-container {
+    /* Reserve space for image before it loads */
+    aspect-ratio: 1 / 1;
+    min-height: 0;
+    background-color: #ffffff;
+  }
+
+  .work-modal-image-container img {
+    /* Prevent image from causing layout shift */
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+  }
+
+  /* Grid cell optimization for mobile */
+  .grid [class*="aspect-square"] {
+    /* Use contain for better rendering performance */
+    contain: layout style paint;
+  }
+
+  /* Mobile-only: Reduce memory usage */
+  @media (hover: none) {
+    /* Touch devices only */
+    .grid [class*="aspect-square"] {
+      /* No will-change to save memory */
+      will-change: auto !important;
+    }
+
+    /* Disable hover effects on touch devices */
+    .group:hover {
+      /* Prevent unnecessary hover state */
+      pointer-events: auto;
+    }
+  }
+
+  /* Mobile-only: Optimize animations */
+  @supports (-webkit-touch-callout: none) {
+    /* iOS Safari specific */
+    * {
+      -webkit-font-smoothing: antialiased;
+      -webkit-backface-visibility: hidden;
+    }
   }
 }
 

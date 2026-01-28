@@ -45,25 +45,29 @@ const Element = React.memo(({ symbol, name, number, accent = false, gifUrl, vide
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Intersection Observer for performance optimization (mobile only)
+  // Intersection Observer for performance optimization (MOBILE ONLY - PC BYPASS)
   useEffect(() => {
     const element = elementRef.current;
     if (!element) return;
 
-    // Only use Intersection Observer on mobile devices
+    // PC version: Always render all GIFs (NO OBSERVER)
     if (!isMobile) {
       setIsVisible(true);
       return;
     }
 
+    // Mobile version: Use observer to stop rendering off-screen GIFs
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          setIsVisible(entry.isIntersecting);
+          // Only update visibility on mobile
+          if (isMobile) {
+            setIsVisible(entry.isIntersecting);
+          }
         });
       },
       {
-        rootMargin: '100px',
+        rootMargin: '200px', // Load slightly before entering viewport
         threshold: 0.01
       }
     );
@@ -76,12 +80,14 @@ const Element = React.memo(({ symbol, name, number, accent = false, gifUrl, vide
   }, [isMobile]);
 
   const handleMouseEnter = useCallback(() => {
+    // PC only: Show GIF on hover
     if (!isMobile) {
       setIsHovered(true);
     }
   }, [isMobile]);
 
   const handleMouseLeave = useCallback(() => {
+    // PC only: Hide GIF on hover out
     if (!isMobile) {
       setIsHovered(false);
     }
@@ -89,19 +95,16 @@ const Element = React.memo(({ symbol, name, number, accent = false, gifUrl, vide
 
   const handleClick = useCallback((e: React.MouseEvent) => {
     if (isMobile) {
-      // On mobile, toggle active state on click
-      e.stopPropagation();
-      setIsActive(!isActive);
-      // Call original onClick after a delay to show GIF
-      setTimeout(() => {
-        onClick?.();
-      }, 300);
+      // Mobile: Direct click to open modal (no GIF toggle)
+      onClick?.();
     } else {
+      // PC: Normal click behavior
       onClick?.();
     }
-  }, [isMobile, isActive, onClick]);
+  }, [isMobile, onClick]);
 
-  const shouldShowGif = isMobile ? isActive : isHovered;
+  // PC: Show GIF on hover, Mobile: Always show static image until modal opens
+  const shouldShowGif = !isMobile && isHovered;
 
   return (
     <div
@@ -115,11 +118,12 @@ const Element = React.memo(({ symbol, name, number, accent = false, gifUrl, vide
         transition-all duration-500 ease-out
         cursor-pointer group
         ${accent ? 'bg-[#FFD700]' : 'bg-white'}
-        ${isHovered || isActive ? 'shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] md:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] scale-[0.98] z-[100]' : 'shadow-none z-0'}
+        ${isHovered ? 'shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] md:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] scale-[0.98] z-[100]' : 'shadow-none z-0'}
       `}
       style={{
         contain: 'layout style paint',
-        willChange: isHovered || isActive ? 'transform, box-shadow, z-index' : 'auto'
+        // PC: will-change on hover, Mobile: no will-change for memory savings
+        willChange: !isMobile && isHovered ? 'transform, box-shadow, z-index' : 'auto'
       }}
     >
       {/* GIF/Thumbnail - Full cell */}
@@ -130,6 +134,7 @@ const Element = React.memo(({ symbol, name, number, accent = false, gifUrl, vide
               src={gifUrl}
               alt=""
               loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover transition-all duration-500"
             />
           ) : (
@@ -137,6 +142,7 @@ const Element = React.memo(({ symbol, name, number, accent = false, gifUrl, vide
               src={thumbnail || gifUrl}
               alt=""
               loading="lazy"
+              decoding={isMobile ? "async" : "auto"}
               className="w-full h-full object-cover grayscale contrast-125 brightness-110 transition-all duration-500"
             />
           )}
