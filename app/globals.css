@@ -1,0 +1,654 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #000000;
+  --accent: #FFD700;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+}
+
+/* Halftone dot pattern background */
+body {
+  background: var(--background);
+  color: var(--foreground);
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.4;
+  z-index: 0;
+  background-image:
+    radial-gradient(circle, black 1.5px, transparent 1.5px);
+  background-size: 6px 6px;
+  pointer-events: none;
+  animation: subtle-shift 60s ease-in-out infinite;
+  will-change: background-position;
+  contain: strict;
+}
+
+@keyframes subtle-shift {
+  0%, 100% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 3px 3px;
+  }
+}
+
+/* Halftone pattern utility class */
+.halftone-pattern {
+  position: relative;
+  contain: layout style paint;
+}
+
+.halftone-pattern::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.12;
+  background-image:
+    radial-gradient(circle, black 1.8px, transparent 1.8px);
+  background-size: 7px 7px;
+  pointer-events: none;
+  will-change: opacity;
+}
+
+/* Accent halftone with yellow */
+.halftone-accent {
+  position: relative;
+  contain: layout style paint;
+}
+
+.halftone-accent::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.12;
+  background-image:
+    radial-gradient(circle, var(--accent) 1.5px, transparent 1.5px);
+  background-size: 5px 5px;
+  pointer-events: none;
+  will-change: opacity;
+}
+
+/* Newspaper halftone effect - stronger dots */
+.halftone-newspaper {
+  position: relative;
+  contain: layout style paint;
+}
+
+.halftone-newspaper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.4;
+  background-image:
+    radial-gradient(circle, black 1.2px, transparent 1.2px);
+  background-size: 4px 4px;
+  pointer-events: none;
+  z-index: 2;
+  will-change: opacity;
+}
+
+/* Typography - Fonts loaded via next/font in layout.tsx */
+.font-grotesk {
+  font-family: var(--font-grotesk), sans-serif;
+  letter-spacing: -0.02em; /* Tight, industrial feel */
+}
+
+.font-mono {
+  font-family: var(--font-mono), monospace;
+  letter-spacing: -0.01em; /* Data-like spacing */
+}
+
+/* Tighter spacing for headings */
+h1, h2, h3 {
+  letter-spacing: -0.03em;
+}
+
+/* Typing cursor animation */
+@keyframes blink-cursor {
+  0%, 49% {
+    opacity: 1;
+  }
+  50%, 100% {
+    opacity: 0;
+  }
+}
+
+.typing-cursor {
+  display: inline-block;
+  margin-left: 2px;
+  animation: blink-cursor 1s infinite;
+  font-weight: 400;
+}
+
+/* Dot text effect - for headlines */
+.dot-text {
+  position: relative;
+}
+
+.dot-text::before {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(circle, black 1.5px, transparent 1.5px);
+  background-size: 3px 3px;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  opacity: 0.15;
+}
+
+/* Section header with dots */
+.section-header {
+  position: relative;
+}
+
+.section-header::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background-image:
+    repeating-linear-gradient(90deg, black 0, black 2px, transparent 2px, transparent 6px);
+}
+
+/* Border Frame Layout - No border */
+.border-frame {
+  border: none;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* New Technical Animations */
+@keyframes slide-right {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 3rem;
+  }
+}
+
+@keyframes slide-left {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 3rem;
+  }
+}
+
+@keyframes slide-down {
+  0% {
+    height: 0;
+  }
+  100% {
+    height: 3rem;
+  }
+}
+
+@keyframes slide-up {
+  0% {
+    height: 0;
+  }
+  100% {
+    height: 3rem;
+  }
+}
+
+@keyframes grid-extend-vertical {
+  0% {
+    height: 0;
+    opacity: 0;
+  }
+  100% {
+    height: 100%;
+    opacity: 1;
+  }
+}
+
+@keyframes grid-extend-horizontal {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  100% {
+    width: 100%;
+    opacity: 1;
+  }
+}
+
+@keyframes diagonal-expand {
+  0% {
+    height: 0;
+    opacity: 0;
+  }
+  100% {
+    height: 141.4%;
+    opacity: 0.2;
+  }
+}
+
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 0.4;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Splash Animations */
+@keyframes splash-burst {
+  0% {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.5) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes splash-fade-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes droplet-fly {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--tx, 30px), var(--ty, -30px)) scale(0);
+    opacity: 0;
+  }
+}
+
+/* Dynamic Grid Animations */
+@keyframes grid-rotate {
+  0% {
+    transform: translate(-50%, -50%) rotate(45deg) scaleY(0);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(45deg) scaleY(1);
+    opacity: 1;
+  }
+}
+
+@keyframes grid-rotate-reverse {
+  0% {
+    transform: translate(-50%, -50%) rotate(-45deg) scaleY(0);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(-45deg) scaleY(1);
+    opacity: 1;
+  }
+}
+
+/* Smooth diagonal pulse */
+@keyframes diagonal-pulse-1 {
+  0%, 100% {
+    transform: translate(-50%, -50%) rotate(45deg) scaleY(0.98);
+  }
+  50% {
+    transform: translate(-50%, -50%) rotate(45deg) scaleY(1.02);
+  }
+}
+
+@keyframes diagonal-pulse-2 {
+  0%, 100% {
+    transform: translate(-50%, -50%) rotate(-45deg) scaleY(0.98);
+  }
+  50% {
+    transform: translate(-50%, -50%) rotate(-45deg) scaleY(1.02);
+  }
+}
+
+@keyframes circle-expand {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes grid-scatter {
+  0% {
+    transform: translate(0, 0) scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+/* Orbit animations for satellites */
+@keyframes orbit {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Smooth orbit with easing */
+@keyframes orbit-smooth {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Breathing circle animation */
+@keyframes circle-breathe {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* Ripple effect for circles */
+@keyframes circle-ripple {
+  0%, 100% {
+    transform: scale(0.95);
+  }
+  50% {
+    transform: scale(1);
+  }
+}
+
+/* Satellite glow pulse */
+@keyframes satellite-glow {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(255, 215, 0, 0.9);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 1);
+    transform: scale(1.1);
+  }
+}
+
+/* Center marker pulse - more dynamic */
+@keyframes center-pulse {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 0.5;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+  }
+  50% {
+    transform: scale(1.15) rotate(180deg);
+    opacity: 0.7;
+    box-shadow: 0 0 18px rgba(255, 215, 0, 0.9);
+  }
+}
+
+/* Pulse animation for dots */
+@keyframes pulse-dot {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.2);
+  }
+}
+
+/* Float animation for droplets */
+@keyframes float-droplet {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+/* Rotate animation for boxes */
+@keyframes rotate-box {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Scale pulse for markers */
+@keyframes scale-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.6;
+  }
+}
+
+/* Blink animation */
+@keyframes blink {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Smooth blink with scale */
+@keyframes blink-smooth {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    opacity: 0.65;
+    transform: scale(1.08) rotate(90deg);
+  }
+}
+
+/* Halftone breathing animation */
+@keyframes halftone-breathe {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.02);
+  }
+}
+
+.animate-slide-right {
+  animation: slide-right 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  width: 0;
+  will-change: width;
+}
+
+.animate-slide-left {
+  animation: slide-left 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  width: 0;
+  will-change: width;
+}
+
+.animate-slide-down {
+  animation: slide-down 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+  height: 0;
+  will-change: height;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+  height: 0;
+  will-change: height;
+}
+
+.animate-grid-extend-vertical {
+  animation: grid-extend-vertical 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+  height: 0;
+  opacity: 0;
+}
+
+.animate-grid-extend-horizontal {
+  animation: grid-extend-horizontal 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+  width: 0;
+  opacity: 0;
+}
+
+.animate-diagonal-expand {
+  animation: diagonal-expand 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards;
+  height: 0;
+  opacity: 0;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 1s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+  will-change: opacity;
+}
+
+.animation-delay-100 {
+  animation-delay: 0.5s;
+}
+
+.animation-delay-200 {
+  animation-delay: 0.6s;
+}
+
+.animation-delay-300 {
+  animation-delay: 0.7s;
+}
+
+.animation-delay-400 {
+  animation-delay: 0.8s;
+}
+
+.animation-delay-500 {
+  animation-delay: 0.9s;
+}
+
+.animation-delay-600 {
+  animation-delay: 1s;
+}
+
+/* Splash animation classes */
+.animate-splash-burst {
+  animation: splash-burst 4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+.animate-splash-fade-in {
+  animation: splash-fade-in 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+.animate-droplet-fly {
+  animation: droplet-fly 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+/* Dynamic grid classes */
+.animate-grid-rotate {
+  animation: grid-rotate 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+  opacity: 0;
+}
+
+.animate-circle-expand {
+  animation: circle-expand 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+  transform: scale(0);
+  opacity: 0;
+}
+
+.animate-grid-scatter {
+  animation: grid-scatter 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+/* Orbit animation classes */
+.animate-orbit-slow {
+  animation: orbit 20s linear infinite;
+  will-change: transform;
+}
+
+.animate-orbit-medium {
+  animation: orbit 15s linear infinite;
+  will-change: transform;
+}
+
+.animate-orbit-fast {
+  animation: orbit 10s linear infinite;
+  will-change: transform;
+}
