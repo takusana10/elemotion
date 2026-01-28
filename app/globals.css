@@ -17,6 +17,52 @@ body {
   background: var(--background);
   color: var(--foreground);
   position: relative;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Mobile performance optimization */
+@media (max-width: 768px) {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    overflow-x: hidden;
+    width: 100vw;
+  }
+
+  /* Reduce animation complexity on mobile */
+  body::before {
+    animation: none;
+    background-position: 0 0;
+  }
+
+  /* Disable or simplify heavy animations on mobile */
+  .halftone-newspaper,
+  .halftone-pattern,
+  .halftone-accent {
+    animation: none !important;
+  }
+
+  /* Reduce will-change usage for better memory management */
+  .animate-orbit-slow,
+  .animate-orbit-medium,
+  .animate-orbit-fast {
+    will-change: auto;
+  }
+
+  /* Simplify hover effects on mobile */
+  @media (hover: none) {
+    [style*="will-change"] {
+      will-change: auto !important;
+    }
+  }
+
+  /* Optimize grid performance */
+  [style*="gridTemplateColumns"] {
+    contain: layout style paint;
+  }
 }
 
 body::before {

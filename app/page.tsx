@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { Play, Sparkles, Lightbulb, Image as ImageIcon } from 'lucide-react';
 import SectionLink from './components/SectionLink';
@@ -29,7 +29,33 @@ interface ElementProps {
 
 const Element = React.memo(({ symbol, name, number, accent = false, gifUrl, videoUrl, thumbnail, onClick }: ElementProps) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const elementRef = useRef<HTMLDivElement>(null);
   const isComingSoon = name === 'Coming Soon';
+
+  // Intersection Observer for performance optimization
+  useEffect(() => {
+    const element = elementRef.current;
+    if (!element) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setIsVisible(entry.isIntersecting);
+        });
+      },
+      {
+        rootMargin: '50px',
+        threshold: 0.01
+      }
+    );
+
+    observer.observe(element);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   const handleMouseEnter = useCallback(() => {
     setIsHovered(true);
@@ -41,24 +67,27 @@ const Element = React.memo(({ symbol, name, number, accent = false, gifUrl, vide
 
   return (
     <div
+      ref={elementRef}
       onClick={onClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       className={`
         col-span-1 row-span-1 aspect-square
-        relative border-2 border-black overflow-hidden
+        relative border border-black sm:border-2 overflow-hidden
         transition-all duration-500 ease-out
         cursor-pointer group
         ${accent ? 'bg-[#FFD700]' : 'bg-white'}
-        ${isHovered ? 'shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] scale-[0.98] z-[100]' : 'shadow-none z-0'}
+        ${isHovered ? 'shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] md:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] scale-[0.98] z-[100]' : 'shadow-none z-0'}
       `}
       style={{
         contain: 'layout style paint',
-        willChange: isHovered ? 'transform, box-shadow, z-index' : 'auto'
+        willChange: isHovered ? 'transform, box-shadow, z-index' : 'auto',
+        backfaceVisibility: 'hidden',
+        transform: 'translateZ(0)'
       }}
     >
       {/* GIF/Thumbnail - Full cell */}
-      {(gifUrl || thumbnail) && (
+      {(gifUrl || thumbnail) && isVisible && (
         <div className="absolute inset-0 z-0 overflow-hidden">
           {isHovered && gifUrl ? (
             <img
@@ -66,6 +95,10 @@ const Element = React.memo(({ symbol, name, number, accent = false, gifUrl, vide
               alt=""
               loading="lazy"
               className="w-full h-full object-cover transition-all duration-500"
+              style={{
+                backfaceVisibility: 'hidden',
+                transform: 'translateZ(0)'
+              }}
             />
           ) : (
             <img
@@ -73,6 +106,10 @@ const Element = React.memo(({ symbol, name, number, accent = false, gifUrl, vide
               alt=""
               loading="lazy"
               className="w-full h-full object-cover grayscale contrast-125 brightness-110 transition-all duration-500"
+              style={{
+                backfaceVisibility: 'hidden',
+                transform: 'translateZ(0)'
+              }}
             />
           )}
         </div>
@@ -87,10 +124,10 @@ const Element = React.memo(({ symbol, name, number, accent = false, gifUrl, vide
       {isComingSoon && (
         <div className="absolute inset-0 z-[2] flex items-center justify-center pointer-events-none">
           <div className="text-center">
-            <p className="font-mono text-xs uppercase tracking-widest opacity-30">
+            <p className="font-mono text-[6px] sm:text-[8px] md:text-xs uppercase tracking-widest opacity-30">
               NO DATA
             </p>
-            <p className="font-mono text-[10px] uppercase tracking-wider opacity-20 mt-1">
+            <p className="font-mono text-[5px] sm:text-[7px] md:text-[10px] uppercase tracking-wider opacity-20 mt-0.5 md:mt-1">
               PENDING...
             </p>
           </div>
@@ -98,14 +135,14 @@ const Element = React.memo(({ symbol, name, number, accent = false, gifUrl, vide
       )}
 
       {/* Content - Number only */}
-      <div className="relative z-10 h-full p-3 flex flex-col justify-between">
+      <div className="relative z-10 h-full p-1 sm:p-2 md:p-3 flex flex-col justify-between">
         <div className="flex justify-between items-start">
-          <span className={`text-xs font-mono font-semibold tracking-tight transition-all duration-300 ${isHovered ? 'translate-x-1 -translate-y-1' : ''}`}>
+          <span className={`text-[8px] sm:text-[10px] md:text-xs font-mono font-semibold tracking-tight transition-all duration-300 ${isHovered ? 'translate-x-1 -translate-y-1' : ''}`}>
             {number}
           </span>
           {videoUrl && (
             <div className={`transition-all duration-300 ${isHovered ? 'scale-110 rotate-12' : 'opacity-40'}`}>
-              <Play size={14} fill="currentColor" />
+              <Play size={10} className="sm:w-3 sm:h-3 md:w-[14px] md:h-[14px]" fill="currentColor" />
             </div>
           )}
         </div>
@@ -214,9 +251,9 @@ export default function Home() {
         <TechnicalOverlay showGrid={true} showCorners={true} />
         <CentricCircles />
         <SplashGraphics intensity="medium" />
-      <main className="min-h-screen p-6 md:p-12 lg:p-16">
+      <main className="min-h-screen p-3 sm:p-4 md:p-12 lg:p-16 relative z-10">
         {/* Header */}
-        <header className="mb-12 md:mb-16 pb-6 border-b-4 border-black relative">
+        <header className="mb-6 sm:mb-8 md:mb-16 pb-4 sm:pb-5 md:pb-6 border-b-2 sm:border-b-3 md:border-b-4 border-black relative z-10">
           {/* Decorative corner mark */}
           <div className="absolute -top-3 -left-3 w-6 h-6 border-l-2 border-t-2 border-black opacity-20" />
           <div className="absolute -top-3 -right-3 w-6 h-6 border-r-2 border-t-2 border-black opacity-20" />
@@ -252,22 +289,22 @@ export default function Home() {
         </header>
 
         {/* Elemotion Section - Main Grid */}
-        <section className="mb-16 md:mb-24 relative">
+        <section className="mb-8 sm:mb-12 md:mb-24 relative">
           {/* Newspaper-style halftone background - animated */}
           <div className="absolute inset-0 pointer-events-none opacity-8" style={{ animation: 'halftone-breathe 15s ease-in-out infinite' }}>
             <div className="halftone-newspaper w-full h-full" />
           </div>
 
           {/* Decorative Labels */}
-          <div className="absolute -top-8 left-0 flex gap-6">
+          <div className="absolute -top-6 sm:-top-7 md:-top-8 left-0 flex gap-3 sm:gap-4 md:gap-6">
             <DataLabel label="SECTION" value="01" />
             <DataLabel label="GRID" value="7×15" />
           </div>
 
-          <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-8 relative">
-            <div className="w-10 h-10 md:w-12 md:h-12 bg-black flex items-center justify-center rotate-45 relative overflow-hidden">
+          <div className="flex items-center gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-5 md:mb-8 relative">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-12 md:h-12 bg-black flex items-center justify-center rotate-45 relative overflow-hidden">
               <div className="text-[#FFD700] -rotate-45 relative z-10">
-                <Sparkles size={20} />
+                <Sparkles size={16} className="sm:w-[18px] sm:h-[18px] md:w-5 md:h-5" />
               </div>
               <div className="absolute inset-0 opacity-30" style={{
                 backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
@@ -275,8 +312,8 @@ export default function Home() {
                 animation: 'subtle-shift 22s ease-in-out infinite'
               }} />
             </div>
-            <div className="flex items-baseline gap-2 md:gap-3">
-              <span className="font-mono text-sm md:text-base font-semibold opacity-60 relative">
+            <div className="flex items-baseline gap-1 sm:gap-2 md:gap-3">
+              <span className="font-mono text-xs sm:text-sm md:text-base font-semibold opacity-60 relative">
                 01
                 <div className="absolute inset-0 opacity-40 pointer-events-none" style={{
                   backgroundImage: 'radial-gradient(circle, black 1px, transparent 1px)',
@@ -284,8 +321,8 @@ export default function Home() {
                   animation: 'subtle-shift 20s ease-in-out infinite'
                 }} />
               </span>
-              <h2 className="font-grotesk font-bold text-3xl md:text-5xl uppercase relative">
-                EVERYDAYS<span className="text-xl md:text-3xl ml-1">（ELEMOTION）</span>
+              <h2 className="font-grotesk font-bold text-2xl sm:text-3xl md:text-5xl uppercase relative">
+                EVERYDAYS<span className="text-base sm:text-xl md:text-3xl ml-0.5 sm:ml-1">（ELEMOTION）</span>
                 <div className="absolute inset-0 opacity-10 pointer-events-none" style={{
                   backgroundImage: 'radial-gradient(circle, black 1.5px, transparent 1.5px)',
                   backgroundSize: '4px 4px',
@@ -295,7 +332,7 @@ export default function Home() {
               </h2>
             </div>
           </div>
-          <div className="relative overflow-x-auto">
+          <div className="relative w-full">
             {/* Grid corner marks */}
             <div className="absolute -top-2 -left-2 w-4 h-4 border-l border-t border-black opacity-40 z-10" />
             <div className="absolute -top-2 -right-2 w-4 h-4 border-r border-t border-black opacity-40 z-10" />
@@ -303,10 +340,10 @@ export default function Home() {
             <div className="absolute -bottom-2 -right-2 w-4 h-4 border-r border-b border-black opacity-40 z-10" />
 
             <div
-              className="grid gap-2 md:gap-3"
+              className="grid gap-1 md:gap-2 lg:gap-3"
               style={{
-                gridTemplateColumns: 'repeat(15, minmax(60px, 1fr))',
-                minWidth: '900px',
+                gridTemplateColumns: 'repeat(15, minmax(0, 1fr))',
+                width: '100%',
                 contain: 'layout style'
               }}
             >
@@ -345,7 +382,7 @@ export default function Home() {
         </section>
 
         {/* Other Sections */}
-        <section className="mb-20 md:mb-32 space-y-6 relative">
+        <section className="mb-12 sm:mb-16 md:mb-32 space-y-4 sm:space-y-5 md:space-y-6 relative">
           {/* Decorative newspaper-style bands - animated */}
           <div className="absolute -left-8 top-[20%] w-24 h-2 bg-black opacity-5 rotate-12" style={{ animation: 'fade-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards, float-droplet 10s ease-in-out infinite' }}>
             <div className="halftone-newspaper w-full h-full" />
