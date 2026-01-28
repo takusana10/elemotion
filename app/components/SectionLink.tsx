@@ -27,7 +27,7 @@ export default function SectionLink({ href, number, title, description, count, i
         block border-4 border-black p-6 md:p-8
         transition-all duration-500 ease-out
         relative overflow-hidden
-        ${accent ? 'bg-[#FFD700]' : 'bg-white'}
+        ${isHovered ? 'bg-[#FFD700]' : 'bg-white'}
         ${isHovered ? 'shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] scale-[0.99]' : 'shadow-none'}
       `}
     >
