@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { X, Play, Sparkles, Lightbulb, Image as ImageIcon } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import { Play, Sparkles, Lightbulb, Image as ImageIcon } from 'lucide-react';
 import SectionLink from './components/SectionLink';
 import Loading from './components/Loading';
 import TechnicalOverlay from './components/TechnicalOverlay';
@@ -9,6 +10,11 @@ import CentricCircles from './components/CentricCircles';
 import DataLabel from './components/DataLabel';
 import SplashGraphics from './components/SplashGraphics';
 import TypingText from './components/TypingText';
+
+// 動的インポートでモーダルのバンドルサイズを削減
+const WorkModal = dynamic(() => import('./components/WorkModal'), {
+  ssr: false,
+});
 
 interface ElementProps {
   symbol: string;
@@ -23,18 +29,15 @@ interface ElementProps {
 
 const Element = React.memo(({ symbol, name, number, accent = false, gifUrl, videoUrl, thumbnail, onClick }: ElementProps) => {
   const [isHovered, setIsHovered] = useState(false);
-  const [gifKey, setGifKey] = useState(0);
   const isComingSoon = name === 'Coming Soon';
 
-  const handleMouseEnter = () => {
+  const handleMouseEnter = useCallback(() => {
     setIsHovered(true);
-    // Force GIF to reload and play from start
-    setGifKey(prev => prev + 1);
-  };
+  }, []);
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = useCallback(() => {
     setIsHovered(false);
-  };
+  }, []);
 
   return (
     <div
@@ -59,10 +62,9 @@ const Element = React.memo(({ symbol, name, number, accent = false, gifUrl, vide
         <div className="absolute inset-0 z-0 overflow-hidden">
           {isHovered && gifUrl ? (
             <img
-              key={gifKey}
               src={gifUrl}
               alt=""
-              loading="eager"
+              loading="lazy"
               className="w-full h-full object-cover transition-all duration-500"
             />
           ) : (
@@ -434,47 +436,10 @@ export default function Home() {
 
       {/* Modal for enlarged work */}
       {selectedWork && (
-        <div
-          className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-8 bg-black bg-opacity-80 animate-fade-in"
-          onClick={() => setSelectedWork(null)}
-          style={{ willChange: 'opacity' }}
-        >
-          <div
-            className="relative max-w-4xl w-full aspect-square bg-white border-4 border-black overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              animation: 'splash-fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-              willChange: 'transform, opacity'
-            }}
-          >
-            {/* Close button */}
-            <button
-              onClick={() => setSelectedWork(null)}
-              className="absolute top-4 right-4 z-10 w-10 h-10 bg-black hover:bg-[#FFD700] transition-colors duration-300 flex items-center justify-center group"
-            >
-              <X size={24} className="text-white group-hover:text-black" />
-            </button>
-
-            {/* Work number */}
-            <div className="absolute top-4 left-4 z-10 font-mono text-lg font-semibold bg-white px-3 py-1 border-2 border-black">
-              {selectedWork.number}
-            </div>
-
-            {/* GIF */}
-            <div className="absolute inset-0">
-              <img
-                src={selectedWork.gifUrl || selectedWork.thumbnail}
-                alt={selectedWork.name}
-                className="w-full h-full object-cover"
-              />
-            </div>
-
-            {/* Subtle halftone overlay */}
-            <div className="absolute inset-0 pointer-events-none opacity-10">
-              <div className="halftone-pattern w-full h-full" />
-            </div>
-          </div>
-        </div>
+        <WorkModal
+          work={selectedWork}
+          onClose={() => setSelectedWork(null)}
+        />
       )}
     </>
   );

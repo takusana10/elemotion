@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, X, Play } from 'lucide-react';
+import { ArrowLeft, Play, X } from 'lucide-react';
 import Loading from '../components/Loading';
 import TechnicalOverlay from '../components/TechnicalOverlay';
 import DataLabel from '../components/DataLabel';
@@ -18,14 +18,17 @@ interface WorkProps {
   onClick: () => void;
 }
 
-const Work = ({ symbol, name, number, videoUrl, thumbnail, accent = false, onClick }: WorkProps) => {
+const Work = React.memo(({ symbol, name, number, videoUrl, thumbnail, accent = false, onClick }: WorkProps) => {
   const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseEnter = useCallback(() => setIsHovered(true), []);
+  const handleMouseLeave = useCallback(() => setIsHovered(false), []);
 
   return (
     <div
       onClick={onClick}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       className={`
         col-span-1 row-span-1 aspect-square
         relative border-2 border-black overflow-hidden
@@ -68,7 +71,9 @@ const Work = ({ symbol, name, number, videoUrl, thumbnail, accent = false, onCli
       </div>
     </div>
   );
-};
+});
+
+Work.displayName = 'Work';
 
 interface VideoModalProps {
   isOpen: boolean;
@@ -77,7 +82,7 @@ interface VideoModalProps {
   title: string;
 }
 
-const VideoModal = ({ isOpen, onClose, videoUrl, title }: VideoModalProps) => {
+const VideoModal = React.memo(({ isOpen, onClose, videoUrl, title }: VideoModalProps) => {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -128,7 +133,9 @@ const VideoModal = ({ isOpen, onClose, videoUrl, title }: VideoModalProps) => {
       </div>
     </div>
   );
-};
+});
+
+VideoModal.displayName = 'VideoModal';
 
 export default function ReelPage() {
   const [isLoading, setIsLoading] = useState(true);
