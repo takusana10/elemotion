@@ -25,6 +25,43 @@ const WorkModal = React.memo(({ work, onClose }: WorkModalProps) => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // モバイル専用：モーダル表示時にスクロールをロックして背景の再描画を完全に停止
+  useEffect(() => {
+    if (!isMobile) return;
+
+    // 現在のスクロール位置を保存
+    const scrollY = window.scrollY;
+    const body = document.body;
+    const html = document.documentElement;
+
+    // スクロールを完全にロック（世界停止）
+    body.style.position = 'fixed';
+    body.style.top = `-${scrollY}px`;
+    body.style.left = '0';
+    body.style.right = '0';
+    body.style.width = '100%';
+    body.style.overflow = 'hidden';
+    html.style.overflow = 'hidden';
+
+    // 背景要素の描画を停止（visibility: hiddenで要素は残しつつ描画を停止）
+    body.setAttribute('data-modal-open', 'true');
+
+    // クリーンアップ：モーダルが閉じた時に元に戻す
+    return () => {
+      body.style.position = '';
+      body.style.top = '';
+      body.style.left = '';
+      body.style.right = '';
+      body.style.width = '';
+      body.style.overflow = '';
+      html.style.overflow = '';
+      body.removeAttribute('data-modal-open');
+
+      // スクロール位置を復元
+      window.scrollTo(0, scrollY);
+    };
+  }, [isMobile]);
+
   return (
     <div
       className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-8 bg-black bg-opacity-80 animate-fade-in"

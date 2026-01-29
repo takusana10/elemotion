@@ -23,6 +23,13 @@ body {
 
 /* Mobile performance optimization */
 @media (max-width: 768px) {
+  /* スクロールバーを完全に非表示（見えないスクロールバーによるガタつきを防止） */
+  ::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
   * {
     -webkit-tap-highlight-color: transparent;
   }
@@ -32,6 +39,9 @@ body {
     -webkit-text-size-adjust: 100%;
     -moz-text-size-adjust: 100%;
     text-size-adjust: 100%;
+    /* スクロールバー非表示（Firefox） */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
 
   body {
@@ -42,6 +52,9 @@ body {
     /* Use dynamic viewport height to prevent address bar issues */
     min-height: 100dvh;
     min-height: -webkit-fill-available;
+    /* スクロールバー非表示 */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
 
   /* Fix for Safari iOS viewport height issue */
@@ -59,6 +72,18 @@ body {
     transform: translateZ(0);
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
+  }
+
+  /* モーダル表示時：背景の描画と計算を完全停止（世界停止） */
+  body[data-modal-open="true"] > *:not([class*="z-[200]"]) {
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  /* モーダル自体（z-[200]）は表示を維持 */
+  body[data-modal-open="true"] [class*="z-[200]"] {
+    visibility: visible !important;
+    pointer-events: auto !important;
   }
 
   /* Disable or simplify heavy animations on mobile */
