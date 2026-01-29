@@ -29,14 +29,19 @@ const WorkModal = React.memo(({ work, onClose }: WorkModalProps) => {
     <div
       className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-8 bg-black bg-opacity-80 animate-fade-in"
       onClick={onClose}
-      style={{ willChange: 'opacity' }}
+      style={{
+        willChange: isMobile ? 'auto' : 'opacity',
+        pointerEvents: 'auto'
+      }}
     >
       <div
         className="work-modal-container relative max-w-4xl w-full aspect-square bg-white border-4 border-black overflow-hidden"
         onClick={(e) => e.stopPropagation()}
         style={{
-          animation: 'splash-fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-          willChange: 'transform, opacity'
+          animation: isMobile ? 'none' : 'splash-fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+          willChange: isMobile ? 'auto' : 'transform, opacity',
+          // Mobile: Prevent layout shift
+          minHeight: isMobile ? '280px' : 'auto'
         }}
       >
         {/* Close button */}
