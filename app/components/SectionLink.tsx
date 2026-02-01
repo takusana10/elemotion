@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import DataLabel from './DataLabel';
 
 interface SectionLinkProps {
@@ -12,14 +13,29 @@ interface SectionLinkProps {
   description: string;
   icon?: React.ReactNode;
   accent?: boolean;
+  requirePassword?: boolean;
 }
 
-export default function SectionLink({ href, number, title, description, icon, accent = false }: SectionLinkProps) {
+export default function SectionLink({ href, number, title, description, icon, accent = false, requirePassword = false }: SectionLinkProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const router = useRouter();
+
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (requirePassword) {
+      e.preventDefault();
+      const password = prompt('パスワードを入力してください:');
+      if (password === '0000') {
+        router.push(href);
+      } else if (password !== null) {
+        alert('パスワードが正しくありません');
+      }
+    }
+  };
 
   return (
     <Link
       href={href}
+      onClick={handleClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className={`

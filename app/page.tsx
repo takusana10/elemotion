@@ -431,6 +431,7 @@ export default function Home() {
             description="Featured client works"
             icon={<Play size={24} fill="#FFD700" />}
             accent={true}
+            requirePassword={true}
           />
 
           <SectionLink
@@ -439,6 +440,7 @@ export default function Home() {
             title="TOY"
             description="Experimental projects and creative explorations"
             icon={<Lightbulb size={24} />}
+            requirePassword={true}
           />
 
           <SectionLink
@@ -467,7 +469,7 @@ export default function Home() {
                   animation: 'subtle-shift 24s ease-in-out infinite'
                 }} />
               </h3>
-              <p className="font-mono text-sm opacity-60">hello@takutosanada.com</p>
+              <p className="font-mono text-sm opacity-60">takusana10@gmail.com</p>
             </div>
             <div>
               <h3 className="font-grotesk font-bold text-xl mb-2 uppercase relative">
