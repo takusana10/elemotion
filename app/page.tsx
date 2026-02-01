@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import dynamic from 'next/dynamic';
-import { Play, Sparkles, Lightbulb, Image as ImageIcon } from 'lucide-react';
+import { Play, Sparkles, Lightbulb, Image as ImageIcon, Lock } from 'lucide-react';
 import SectionLink from './components/SectionLink';
 import Loading from './components/Loading';
 import TechnicalOverlay from './components/TechnicalOverlay';
@@ -427,7 +427,11 @@ export default function Home() {
           <SectionLink
             href="/reel"
             number="02"
-            title="REEL"
+            title={
+              <span className="inline-flex items-center gap-2">
+                REEL <Lock size={20} strokeWidth={2} />
+              </span>
+            }
             description="Featured client works"
             icon={<Play size={24} fill="#FFD700" />}
             accent={true}
@@ -437,7 +441,11 @@ export default function Home() {
           <SectionLink
             href="/toy"
             number="03"
-            title="TOY"
+            title={
+              <span className="inline-flex items-center gap-2">
+                TOY <Lock size={20} strokeWidth={2} />
+              </span>
+            }
             description="Experimental projects and creative explorations"
             icon={<Lightbulb size={24} />}
             requirePassword={true}

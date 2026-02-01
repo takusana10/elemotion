@@ -9,7 +9,7 @@ import DataLabel from './DataLabel';
 interface SectionLinkProps {
   href: string;
   number: string;
-  title: string;
+  title: React.ReactNode;
   description: string;
   icon?: React.ReactNode;
   accent?: boolean;
