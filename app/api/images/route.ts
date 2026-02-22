@@ -1,27 +1,17 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+
+export const runtime = 'edge';
 
 export async function GET() {
-  try {
-    const imagesDir = path.join(process.cwd(), 'public', 'image');
+  // Static list of image files
+  // Update this list when adding new files
+  const files = [
+    '250739_constrain-modifier_v02_0047.png',
+    '260119_egg-split_v01.png',
+    'IMG_1274 (1).JPG',
+    'IMG_1287.JPG',
+    'IMG_1427.png',
+  ];
 
-    // Check if directory exists
-    if (!fs.existsSync(imagesDir)) {
-      return NextResponse.json({ files: [] });
-    }
-
-    // Read directory and filter for image files
-    const files = fs.readdirSync(imagesDir)
-      .filter(file => {
-        const ext = path.extname(file).toLowerCase();
-        return ['.jpg', '.jpeg', '.png', '.webp'].includes(ext);
-      })
-      .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
-
-    return NextResponse.json({ files });
-  } catch (error) {
-    console.error('Error reading images directory:', error);
-    return NextResponse.json({ files: [] });
-  }
+  return NextResponse.json({ files });
 }
