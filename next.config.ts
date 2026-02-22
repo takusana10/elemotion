@@ -15,6 +15,9 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ['lucide-react'],
   },
+
+  // Standalone output for better deployment
+  output: 'standalone',
 };
 
 export default nextConfig;
