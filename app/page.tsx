@@ -356,7 +356,7 @@ export default function Home() {
                 }} />
               </span>
               <h2 className="font-grotesk font-bold text-2xl sm:text-3xl md:text-5xl uppercase relative">
-                EVERYDAYS<span className="text-base sm:text-xl md:text-3xl ml-0.5 sm:ml-1">（ELEMOTION）</span>
+                EVERYDAYS
                 <div className="absolute inset-0 opacity-10 pointer-events-none" style={{
                   backgroundImage: 'radial-gradient(circle, black 1.5px, transparent 1.5px)',
                   backgroundSize: '4px 4px',
