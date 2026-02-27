@@ -27,6 +27,7 @@ export async function GET() {
     'E_019.gif',
     'E_020.gif',
     'E_021.gif',
+    'E_022.gif',
   ];
 
   return NextResponse.json({ files });
